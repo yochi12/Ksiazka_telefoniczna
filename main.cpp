@@ -264,12 +264,9 @@ void usunOsobe (vector<KsiazkaAdresowa> &daneOsob){
     if (potwierdzenieUsuniecia!="t")
         return;
 
-    for(int i=0; i<daneOsob.size(); i++){
-        if(numerIDDoUsuniecia==daneOsob[i].id){
-            itr = daneOsob.begin()+i;
-            daneOsob.erase(itr);
-        }
-    }
+    itr = daneOsob.begin()+pozycjaWKsiazce;
+    daneOsob.erase(itr);
+
     zapiszWszystkieOsobyDoTXT(daneOsob);
 
     cout<<"Adresat usuniety!";
@@ -309,22 +306,22 @@ void menuEdycja(vector<KsiazkaAdresowa> &daneOsob){
             cout<<"0. Powrot do menu"                   <<endl<<endl;
 
             wypisywanieDanychPoLinijce(daneOsob, pozycjaWKsiazce);
-            wybor=dokananyWyborEdycja(daneOsob, szukanyNumerID);
+            wybor=dokananyWyborEdycja(daneOsob, pozycjaWKsiazce);
 
             if (wybor=='0')
                 break;
         }
 }
 
-char dokananyWyborEdycja(vector<KsiazkaAdresowa> &daneOsob, int szukanyNumerID){
+char dokananyWyborEdycja(vector<KsiazkaAdresowa> &daneOsob, int pozycjaWKsiazce){
     char wybor;
     wybor=getch();
     switch(wybor){
-        case '1':   zmienImie(daneOsob, szukanyNumerID);                break;
-        case '2':   zmienNazwisko(daneOsob, szukanyNumerID);            break;
-        case '3':   zmienNumerTelefonu(daneOsob, szukanyNumerID);       break;
-        case '4':   zmienEmail(daneOsob, szukanyNumerID);               break;
-        case '5':   zmienAdres(daneOsob, szukanyNumerID);               break;
+        case '1':   zmienImie(daneOsob, pozycjaWKsiazce);                break;
+        case '2':   zmienNazwisko(daneOsob, pozycjaWKsiazce);            break;
+        case '3':   zmienNumerTelefonu(daneOsob, pozycjaWKsiazce);       break;
+        case '4':   zmienEmail(daneOsob, pozycjaWKsiazce);               break;
+        case '5':   zmienAdres(daneOsob, pozycjaWKsiazce);               break;
         case '0':   wybor='0';                                          break;
 
         default: cout<<"Nie ma takiej opcji w menu.";
@@ -333,48 +330,42 @@ char dokananyWyborEdycja(vector<KsiazkaAdresowa> &daneOsob, int szukanyNumerID){
     return wybor;
 }
 
-void zmienImie(vector<KsiazkaAdresowa> &daneOsob, int szukanyNumerID){
+void zmienImie(vector<KsiazkaAdresowa> &daneOsob, int pozycjaWKsiazce){
     string informacjaDoZmiany;
     cout<<"Podaj nowe imie: ";       cin>>informacjaDoZmiany;
 
-    szukanyNumerID=znajdzPozycjeOsobyWKsiazce(daneOsob, szukanyNumerID); //zamieniamy "szukanyNumerID" na cyfre odpowiadajaca miejscu w wektorze tej osoby
-    daneOsob[szukanyNumerID].imie=informacjaDoZmiany;
-    zapiszWszystkieOsobyDoTXT(daneOsob);
+    daneOsob[pozycjaWKsiazce].imie=informacjaDoZmiany;
+    zapiszWszystkieOsobyDoTXT(daneOsob); //Zapisuje WSZYSTKIE informacje na temat WSZYSTKICH osob
 }
 
-void zmienNazwisko(vector<KsiazkaAdresowa> &daneOsob, int szukanyNumerID){
+void zmienNazwisko(vector<KsiazkaAdresowa> &daneOsob, int pozycjaWKsiazce){
     string informacjaDoZmiany;
     cout<<"Podaj nowe nazwisko: ";       cin>>informacjaDoZmiany;
 
-    szukanyNumerID=znajdzPozycjeOsobyWKsiazce(daneOsob, szukanyNumerID);
-    daneOsob[szukanyNumerID].nazwisko=informacjaDoZmiany;
+    daneOsob[pozycjaWKsiazce].nazwisko=informacjaDoZmiany;
     zapiszWszystkieOsobyDoTXT(daneOsob);
 }
 
-void zmienNumerTelefonu(vector<KsiazkaAdresowa> &daneOsob, int szukanyNumerID){
+void zmienNumerTelefonu(vector<KsiazkaAdresowa> &daneOsob, int pozycjaWKsiazce){
     string informacjaDoZmiany;
     cout<<"Podaj nowy numer telefonu: ";       cin>>informacjaDoZmiany;
 
-    szukanyNumerID=znajdzPozycjeOsobyWKsiazce(daneOsob, szukanyNumerID);
-    daneOsob[szukanyNumerID].numerTelefonu=informacjaDoZmiany;
+    daneOsob[pozycjaWKsiazce].numerTelefonu=informacjaDoZmiany;
     zapiszWszystkieOsobyDoTXT(daneOsob);
 }
 
-void zmienEmail(vector<KsiazkaAdresowa> &daneOsob, int szukanyNumerID){
+void zmienEmail(vector<KsiazkaAdresowa> &daneOsob, int pozycjaWKsiazce){
     string informacjaDoZmiany;
     cout<<"Podaj nowy email: ";       cin>>informacjaDoZmiany;
 
-    szukanyNumerID=znajdzPozycjeOsobyWKsiazce(daneOsob, szukanyNumerID);
-    daneOsob[szukanyNumerID].email=informacjaDoZmiany;
+    daneOsob[pozycjaWKsiazce].email=informacjaDoZmiany;
     zapiszWszystkieOsobyDoTXT(daneOsob);
 }
 
-void zmienAdres(vector<KsiazkaAdresowa> &daneOsob, int szukanyNumerID){
+void zmienAdres(vector<KsiazkaAdresowa> &daneOsob, int pozycjaWKsiazce){
     string informacjaDoZmiany;
     cout<<"Podaj nowy adres: ";       cin>>informacjaDoZmiany;
 
-    szukanyNumerID=znajdzPozycjeOsobyWKsiazce(daneOsob, szukanyNumerID);
-    daneOsob[szukanyNumerID].adres=informacjaDoZmiany;
+    daneOsob[pozycjaWKsiazce].adres=informacjaDoZmiany;
     zapiszWszystkieOsobyDoTXT(daneOsob);
 }
-

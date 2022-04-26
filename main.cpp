@@ -1,10 +1,10 @@
-#include <iostream>
-#include <fstream>      //rejestracja, logowanie oraz zmiana hasla dziala, ale nie na pliku .txt
-#include <cstdlib>      //wnetrze funkjci "dokonanyWybor" dodano do "menuGlowne", a funkcje usunieto
+#include <iostream>     ///Ksiazka adresowa z mozliwoscia rejestracji i logowania sie (jedno .txt)
+#include <fstream>      ///oraz dodawaniem, wyszukiwaniem, edycja i usuwaniem kontaktow (drugie .txt)
+#include <cstdlib>
 #include <windows.h>
-#include <conio.h>      //uzytkownicy widza "swoje" kontakty. Teraz czas na zmiane jednego pliku .txt na drugi (!!)
-#include <vector>       //problem z ID dla nowej osoby rozwiazany. Trzeba jeszcze zaktualizowac ID podczas usuwania osoby //zaktualizowano : ]
-#include <sstream>      //
+#include <conio.h>
+#include <vector>
+#include <sstream>
 
 using namespace std;
 
@@ -18,34 +18,35 @@ struct KontaUzytkownikow{
     string login, haslo;
 };
 
+//////////////////////////////////////Funkcje wczytujace/zapisujace uzytkownikow z/do .txt
 void zapiszWszystkichUzytkownikowDoStrukturyZTXT(vector<KontaUzytkownikow> &uzytkownicy);
-void rozdzielNaOpowiednieZmienneDoStrukturyKontaUzytkownikow(vector<KontaUzytkownikow> &uzytkownicy, string calaLiniaZTXT);
+void rozdzielNaOpowiednieZmienneDoStrukturyUzytkownicy(vector<KontaUzytkownikow> &uzytkownicy, string calaLiniaZTXT);
 void zapiszJednegoUzytkownikaDoTXT(vector<KontaUzytkownikow> &uzytkownicy);
 void zapiszWszystkichUzytkownikowDoTXT(vector<KontaUzytkownikow> &uzytkownicy);
 
+//////////////////////////////////////Funkcje dotyczace logowania (uzytkownik)
 void menuLogowania(vector<KontaUzytkownikow> &uzytkownicy);
 void logowanie(vector<KontaUzytkownikow> &uzytkownicy);
 void rejestracja(vector<KontaUzytkownikow> &uzytkownicy);
-void menuZalogowanegoUzytkownika(vector<KontaUzytkownikow> &uzytkownicy, int pozycjaUzytkownika);
 void zmianaHasla(vector<KontaUzytkownikow> &uzytkownicy, int pozycjaUzytkownika);
 
-void wypiszWszystkich(vector<KontaUzytkownikow> uzytkownicy);
-
-int konwersjaStringNaInt(string liczbaString);
+//////////////////////////////////////Menu glowne, funkcje wczytujace/zapisujace uzytkownikow z/do .txt
 int menuGlowne(vector<KontaUzytkownikow> &uzytkownicy, int pozycjaUzytkownika);
 int zapiszWszystkichAdresatowDoStrukturyZPlikuTXT(vector<KsiazkaAdresowa> &daneOsob, vector<KontaUzytkownikow> &uzytkownicy, int pozycjaUzytkownika);
+int rozdzielNaOpowiednieZmienneDoStrukturyAdresaci(vector<KsiazkaAdresowa> &daneOsob, string calaLiniaZTXT, vector<KontaUzytkownikow> &uzytkownicy, int pozycjaUzytkownika);
 bool porownajIDOsobyZIDUzytkownika(string calaLiniaZTXT, vector<KontaUzytkownikow> &uzytkownicy, int pozycjaUzytkownika);
-void zapiszWszystkieOsobyDoTXT(vector<KsiazkaAdresowa> &daneOsob);
-void zapiszJednaOsobeDoTXT(vector<KsiazkaAdresowa> &daneOsob);
-void wypisywanieDanychPoLinijce (vector<KsiazkaAdresowa> daneOsob, int i);
-int znajdzPozycjeOsobyWKsiazce(vector<KsiazkaAdresowa> &daneOsob, int szukanyNumerID);
-int rozdzielNaOpowiednieZmienneDoStruktury(vector<KsiazkaAdresowa> &daneOsob, string calaLiniaZTXT, vector<KontaUzytkownikow> &uzytkownicy, int pozycjaUzytkownika);
+void zapiszJednegoAdresataDoTXT(vector<KsiazkaAdresowa> &daneOsob);
 
-int dodajNowaOsobe (vector<KsiazkaAdresowa> &daneOsob, vector<KontaUzytkownikow> &uzytkownicy, int pozycjaUzytkownika, int ostatnieID);
+//////////////////////////////////////Funkcje pomocnicze
+void wypisywanieAdresatowPoLinijce(vector<KsiazkaAdresowa> daneOsob, int i);
+int znajdzPozycjeOsobyWKsiazce(vector<KsiazkaAdresowa> &daneOsob, int szukanyNumerID);
+
+//////////////////////////////////////Opcje z menu glownego
+int dodajNowegoAdresata(vector<KsiazkaAdresowa> &daneOsob, vector<KontaUzytkownikow> &uzytkownicy, int pozycjaUzytkownika, int ostatnieID);
 void szukajPoImieniu(vector<KsiazkaAdresowa> daneOsob);
 void szukajPoNazwisku(vector<KsiazkaAdresowa> daneOsob);
-void wypiszWszystkieOsoby(vector<KsiazkaAdresowa> daneOsob);
-int usunOsobe (vector<KsiazkaAdresowa> &daneOsob, int ostatnieID);
+void wypiszWszystkichAdresatow(vector<KsiazkaAdresowa> daneOsob);
+int usunAdresata(vector<KsiazkaAdresowa> &daneOsob, int ostatnieID);
 void menuEdycja(vector<KsiazkaAdresowa> &daneOsob);
 char dokananyWyborEdycja(vector<KsiazkaAdresowa> &daneOsob, int szukanyNumerID);
 void zmienImie(vector<KsiazkaAdresowa> &daneOsob, int szukanyNumerID);
@@ -53,6 +54,14 @@ void zmienNazwisko(vector<KsiazkaAdresowa> &daneOsob, int szukanyNumerID);
 void zmienNumerTelefonu(vector<KsiazkaAdresowa> &daneOsob, int szukanyNumerID);
 void zmienAdres(vector<KsiazkaAdresowa> &daneOsob, int szukanyNumerID);
 void zmienEmail(vector<KsiazkaAdresowa> &daneOsob, int szukanyNumerID);
+
+//////////////////////////////////////Przepisywanie danych miedzy dwoma plikami .txt przy edycji i usuwaniu adresatow
+int funkcjaZPlikamiDoEdycjiAdresatow(vector<KsiazkaAdresowa> daneOsob, int idUsunietegoAdresata);
+string znajdzIDAdresataIUzytkownika(vector<KsiazkaAdresowa> daneOsob, int &IDAdresataPlik1, int &IDUzytkownikaPlik1, int &IDDomniemanegoOstatniegoAdresataPlik1, string liniaCase);
+
+//////////////////////////////////////Konwersje etc
+int konwersjaStringNaInt(string liczbaString);
+
 
 
 int main(){
@@ -63,9 +72,10 @@ int main(){
     return 0;
 }
 
+//////////////////////////////////////Funkcje wczytujace/zapisujace uzytkownikow z/do .txt
 void zapiszWszystkichUzytkownikowDoStrukturyZTXT(vector<KontaUzytkownikow> &uzytkownicy){
     fstream plik2;
-    plik2.open("Adresaci.txt",ios::in);
+    plik2.open("Uzytkowkicy.txt",ios::in);
 
     if(plik2.good()==false)
         return;
@@ -77,12 +87,12 @@ void zapiszWszystkichUzytkownikowDoStrukturyZTXT(vector<KontaUzytkownikow> &uzyt
             switch(numerLinii){ //zamiast "numerLinii moglibysmy wpisac po prostu "1"
                 case 1: calaLiniaZTXT= liniaCase;            break;
             }
-        rozdzielNaOpowiednieZmienneDoStrukturyKontaUzytkownikow(uzytkownicy, calaLiniaZTXT);
+        rozdzielNaOpowiednieZmienneDoStrukturyUzytkownicy(uzytkownicy, calaLiniaZTXT);
     }
     plik2.close();
 }
 
-void rozdzielNaOpowiednieZmienneDoStrukturyKontaUzytkownikow(vector<KontaUzytkownikow> &uzytkownicy, string calaLiniaZTXT){
+void rozdzielNaOpowiednieZmienneDoStrukturyUzytkownicy(vector<KontaUzytkownikow> &uzytkownicy, string calaLiniaZTXT){
     KontaUzytkownikow uzytkownik_DoPobrania;
     int IDDoZapisaniaWStrukturze, licznik=0;
     string  slowoDoZapisaniaWStrukturze;
@@ -109,7 +119,7 @@ void zapiszJednegoUzytkownikaDoTXT(vector<KontaUzytkownikow> &uzytkownicy){
     int miejsceGdzieZapisacNowegoUzytkownika=uzytkownicy.size()-1;
 
     fstream plik2;
-    plik2.open("Adresaci.txt", ios::out | ios::app);
+    plik2.open("Uzytkowkicy.txt", ios::out | ios::app);
 
         plik2<<uzytkownicy[miejsceGdzieZapisacNowegoUzytkownika].idUzytkownika;         plik2<<znak;
         plik2<<uzytkownicy[miejsceGdzieZapisacNowegoUzytkownika].login;                 plik2<<znak;
@@ -122,7 +132,7 @@ void zapiszWszystkichUzytkownikowDoTXT(vector<KontaUzytkownikow> &uzytkownicy){
     string znak="|";
 
     fstream plik2;
-    plik2.open("Adresaci.txt", ios::out);
+    plik2.open("Uzytkowkicy.txt", ios::out);
     for (int i=0; i<uzytkownicy.size(); i++)
     {
         plik2<<uzytkownicy[i].idUzytkownika;         plik2<<znak;
@@ -133,8 +143,7 @@ void zapiszWszystkichUzytkownikowDoTXT(vector<KontaUzytkownikow> &uzytkownicy){
 }
 
 
-
-
+//////////////////////////////////////Funkcje dotyczace logowania (uzytkownik)
 void menuLogowania(vector<KontaUzytkownikow> &uzytkownicy){
     char wybor;
     while(1){
@@ -149,8 +158,7 @@ void menuLogowania(vector<KontaUzytkownikow> &uzytkownicy){
             case '1':   logowanie(uzytkownicy);             break;
             case '2':   rejestracja(uzytkownicy);           break;
             case '0':   exit(0);                            break;
-            case '4':   wypiszWszystkich(uzytkownicy);      break;
-            default: cout<<"Nie ma takiej opcji w menu.";
+            default: cout<<endl<<"Nie ma takiej opcji w menu.";
             Sleep(1000);
             }
         }
@@ -216,7 +224,7 @@ void logowanie(vector<KontaUzytkownikow> &uzytkownicy){
 
 void zmianaHasla(vector<KontaUzytkownikow> &uzytkownicy, int pozycjaUzytkownika){
     string haslo;
-    cout<<"Podaj nowe haslo: "; cin>>haslo;
+    cout<<endl<<"Podaj nowe haslo: "; cin>>haslo;
 
     uzytkownicy[pozycjaUzytkownika].haslo=haslo;
     zapiszWszystkichUzytkownikowDoTXT(uzytkownicy);
@@ -226,18 +234,7 @@ void zmianaHasla(vector<KontaUzytkownikow> &uzytkownicy, int pozycjaUzytkownika)
 }
 
 
-void wypiszWszystkich(vector<KontaUzytkownikow> uzytkownicy){ //dla sprawdzania, pozniej do usuniecia
-        for (int i=0; i<uzytkownicy.size(); i++){
-        cout<<endl<<"idUzytkownika: "<<uzytkownicy[i].idUzytkownika     <<endl;
-        cout<<"login: "<<uzytkownicy[i].login                           <<endl;
-        cout<<"haslo: "<<uzytkownicy[i].haslo                           <<endl;
-    }
-    cout<<endl<<"rozmiar struktury: "<<uzytkownicy.size()               <<endl<<endl;
-    system("pause");
-}
-
-////////////////////////////////////////////////////////////////////////////////////////////////
-
+//////////////////////////////////////Menu glowne, funkcje wczytujace/zapisujace uzytkownikow z/do .txt
 int menuGlowne(vector<KontaUzytkownikow> &uzytkownicy, int pozycjaUzytkownika){
     vector<KsiazkaAdresowa> daneOsob;
     KsiazkaAdresowa pobrane;
@@ -246,30 +243,30 @@ int menuGlowne(vector<KontaUzytkownikow> &uzytkownicy, int pozycjaUzytkownika){
     char wybor;
     while(1){
             system("cls");
-            cout<<"..::Ksiazka adresowa::.. ("<<uzytkownicy[pozycjaUzytkownika].login<<")"            <<endl;
-            cout<<"1. Dodaj adresata"                   <<endl;
-            cout<<"2. Wyszukaj po imieniu"              <<endl;
-            cout<<"3. Wyszukaj po nazwisku"             <<endl;
-            cout<<"4. Wyswietl wszystkich adresatow"    <<endl;
-            cout<<"5. Usun adresata"                    <<endl;
-            cout<<"6. Edytuj adresata"                  <<endl;
-            cout<<"7. Zmien haslo"                      <<endl;
-            cout<<"8. Wyloguj sie"                      <<endl;
-            cout<<"0. Zakoncz program"                  <<endl;
+            cout<<"..::Ksiazka adresowa::.. ("<<uzytkownicy[pozycjaUzytkownika].login<<")"          <<endl;
+            cout<<"1. Dodaj adresata"                                                               <<endl;
+            cout<<"2. Wyszukaj po imieniu"                                                          <<endl;
+            cout<<"3. Wyszukaj po nazwisku"                                                         <<endl;
+            cout<<"4. Wyswietl wszystkich adresatow"                                                <<endl;
+            cout<<"5. Usun adresata"                                                                <<endl;
+            cout<<"6. Edytuj adresata"                                                              <<endl;
+            cout<<"7. Zmien haslo"                                                                  <<endl;
+            cout<<"8. Wyloguj sie"                                                                  <<endl;
+            cout<<"0. Zakoncz program"                                                              <<endl;
             wybor=getch();
 
         switch(wybor){
-            case '1':   ostatnieID = dodajNowaOsobe(daneOsob, uzytkownicy, pozycjaUzytkownika, ostatnieID);               break;
-            case '2':   szukajPoImieniu(daneOsob);              break;
-            case '3':   szukajPoNazwisku(daneOsob);             break;
-            case '4':   wypiszWszystkieOsoby(daneOsob);         break;
-            case '5':   ostatnieID = usunOsobe(daneOsob, ostatnieID);                    break;
-            case '6':   menuEdycja(daneOsob);                   break;
-            case '7':   zmianaHasla(uzytkownicy, pozycjaUzytkownika);               break;
-            case '8':   menuLogowania(uzytkownicy);             break;
-            case '0':   exit(0);                                break;
+            case '1':   ostatnieID = dodajNowegoAdresata(daneOsob, uzytkownicy, pozycjaUzytkownika, ostatnieID);            break;
+            case '2':   szukajPoImieniu(daneOsob);                                                                          break;
+            case '3':   szukajPoNazwisku(daneOsob);                                                                         break;
+            case '4':   wypiszWszystkichAdresatow(daneOsob);                                                                break;
+            case '5':   ostatnieID = usunAdresata(daneOsob, ostatnieID);                                                    break;
+            case '6':   menuEdycja(daneOsob);                                                                               break;
+            case '7':   zmianaHasla(uzytkownicy, pozycjaUzytkownika);                                                       break;
+            case '8':   menuLogowania(uzytkownicy);                                                                         break;
+            case '0':   exit(0);                                                                                            break;
 
-            default: cout<<"Nie ma takiej opcji w menu.";
+            default: cout<<endl<<"Nie ma takiej opcji w menu.";
             Sleep(1000);
         }
     }
@@ -292,17 +289,48 @@ int zapiszWszystkichAdresatowDoStrukturyZPlikuTXT(vector<KsiazkaAdresowa> &daneO
             switch(numerLinii){ //zamiast "numerLinii moglibysmy wpisac po prostu "1"
                 case 1: calaLiniaZTXT= liniaCase;            break;
             }
-
-            ostatnieID = rozdzielNaOpowiednieZmienneDoStruktury(daneOsob, calaLiniaZTXT, uzytkownicy, pozycjaUzytkownika);
+            ostatnieID = rozdzielNaOpowiednieZmienneDoStrukturyAdresaci(daneOsob, calaLiniaZTXT, uzytkownicy, pozycjaUzytkownika);
     }
     plik1.close();
     return ostatnieID;
 }
 
-bool porownajIDOsobyZIDUzytkownika(string calaLiniaZTXT, vector<KontaUzytkownikow> &uzytkownicy, int pozycjaUzytkownika){        ///
+int rozdzielNaOpowiednieZmienneDoStrukturyAdresaci(vector<KsiazkaAdresowa> &daneOsob, string calaLiniaZTXT, vector<KontaUzytkownikow> &uzytkownicy, int pozycjaUzytkownika){
+    KsiazkaAdresowa pobrane;
+    int IDAdresataDoZapisaniaWStrukturze, IDUzytkownikaDoZapisaniaWStrukturze, licznik=0, ostatnieID=0;
+    string  slowoDoZapisaniaWStrukturze;
+
+    for(int i=0; i<calaLiniaZTXT.length();i++){
+        if(calaLiniaZTXT[i]!='|')
+                slowoDoZapisaniaWStrukturze+=calaLiniaZTXT[i];
+        else{
+            switch(licznik){
+            case 0: IDAdresataDoZapisaniaWStrukturze=konwersjaStringNaInt(slowoDoZapisaniaWStrukturze);
+                    pobrane.id=IDAdresataDoZapisaniaWStrukturze;                                        break;
+            case 1: IDUzytkownikaDoZapisaniaWStrukturze=konwersjaStringNaInt(slowoDoZapisaniaWStrukturze);
+                    pobrane.idUzytkownikaKA=IDUzytkownikaDoZapisaniaWStrukturze;                break;
+            case 2: pobrane.imie=slowoDoZapisaniaWStrukturze;                                   break;
+            case 3: pobrane.nazwisko=slowoDoZapisaniaWStrukturze;                               break;
+            case 4: pobrane.numerTelefonu=slowoDoZapisaniaWStrukturze;                          break;
+            case 5: pobrane.email=slowoDoZapisaniaWStrukturze;                                  break;
+            case 6: pobrane.adres=slowoDoZapisaniaWStrukturze;                                  break;
+            }
+                slowoDoZapisaniaWStrukturze="";
+                licznik++;
+        }
+    }
+    ostatnieID = IDAdresataDoZapisaniaWStrukturze;
+
+    if(porownajIDOsobyZIDUzytkownika(calaLiniaZTXT, uzytkownicy, pozycjaUzytkownika)==true)
+        daneOsob.push_back(pobrane);
+
+    return ostatnieID;
+}
+
+bool porownajIDOsobyZIDUzytkownika(string calaLiniaZTXT, vector<KontaUzytkownikow> &uzytkownicy, int pozycjaUzytkownika){
     int IDUzytkownikaDoZapisaniaWStrukturze, licznik=0;
     string  slowoDoZapisaniaWStrukturze;
-    for(int i=0; i<calaLiniaZTXT.length();i++){//porownuje ID osoby z ID uzytkownika
+    for(int i=0; i<calaLiniaZTXT.length();i++){
         if(calaLiniaZTXT[i]!='|')
                 slowoDoZapisaniaWStrukturze+=calaLiniaZTXT[i];
         else{
@@ -315,12 +343,12 @@ bool porownajIDOsobyZIDUzytkownika(string calaLiniaZTXT, vector<KontaUzytkowniko
         }
     }
     if (IDUzytkownikaDoZapisaniaWStrukturze==uzytkownicy[pozycjaUzytkownika].idUzytkownika)
-        return true;
+        return true;//porownuje ID osoby z ID uzytkownika
     else
         return false;
 }
 
-void zapiszJednaOsobeDoTXT(vector<KsiazkaAdresowa> &daneOsob){
+void zapiszJednegoAdresataDoTXT(vector<KsiazkaAdresowa> &daneOsob){
     string znak="|";
     int miejsceGdzieZapisacNowaOsobe=daneOsob.size()-1;
 
@@ -338,58 +366,33 @@ void zapiszJednaOsobeDoTXT(vector<KsiazkaAdresowa> &daneOsob){
     plik1.close();
 }
 
-void zapiszWszystkieOsobyDoTXT(vector<KsiazkaAdresowa> &daneOsob){
-    string znak="|";
 
-    fstream plik1;
-    plik1.open("Ksiazka adresowa.txt", ios::out);
-    for (int i=0; i<daneOsob.size(); i++)
-    {
-        plik1<<daneOsob[i].id;                  plik1<<znak;
-        plik1<<daneOsob[i].idUzytkownikaKA;     plik1<<znak;
-        plik1<<daneOsob[i].imie;                plik1<<znak;
-        plik1<<daneOsob[i].nazwisko;            plik1<<znak;
-        plik1<<daneOsob[i].numerTelefonu;       plik1<<znak;
-        plik1<<daneOsob[i].email;               plik1<<znak;
-        plik1<<daneOsob[i].adres;               plik1<<znak<<endl;
-    }
-    plik1.close();
+
+//////////////////////////////////////Funkcje pomocnicze
+void wypisywanieAdresatowPoLinijce (vector<KsiazkaAdresowa> daneOsob, int i){
+    //cout<<"ID Uzytkownika (z ksiazki): ";  cout<<daneOsob[i].idUzytkownikaKA<<endl; ///dla sprawdzenia, czy dany kontakt nalezy do tego uzytkownika : ]
+    cout<<"ID: ";              cout<<daneOsob[i].id<<endl;
+    cout<<"Imie: ";            cout<<daneOsob[i].imie<<endl;
+    cout<<"Nazwisko: ";        cout<<daneOsob[i].nazwisko<<endl;
+    cout<<"Numer telefonu: ";  cout<<daneOsob[i].numerTelefonu<<endl;
+    cout<<"Email: ";           cout<<daneOsob[i].email<<endl;
+    cout<<"Adres: ";           cout<<daneOsob[i].adres<<endl<<endl;
 }
 
-int rozdzielNaOpowiednieZmienneDoStruktury(vector<KsiazkaAdresowa> &daneOsob, string calaLiniaZTXT, vector<KontaUzytkownikow> &uzytkownicy, int pozycjaUzytkownika){
-    KsiazkaAdresowa pobrane;
-    int IDDoZapisaniaWStrukturze, IDUzytkownikaDoZapisaniaWStrukturze, licznik=0, ostatnieID=0;
-    string  slowoDoZapisaniaWStrukturze;
-
-    for(int i=0; i<calaLiniaZTXT.length();i++){
-        if(calaLiniaZTXT[i]!='|')
-                slowoDoZapisaniaWStrukturze+=calaLiniaZTXT[i];
-        else{
-            switch(licznik){
-            case 0: IDDoZapisaniaWStrukturze=konwersjaStringNaInt(slowoDoZapisaniaWStrukturze);
-                    pobrane.id=IDDoZapisaniaWStrukturze;                                        break;
-            case 1: IDUzytkownikaDoZapisaniaWStrukturze=konwersjaStringNaInt(slowoDoZapisaniaWStrukturze);
-                    pobrane.idUzytkownikaKA=IDUzytkownikaDoZapisaniaWStrukturze;                break;
-            case 2: pobrane.imie=slowoDoZapisaniaWStrukturze;                                   break;
-            case 3: pobrane.nazwisko=slowoDoZapisaniaWStrukturze;                               break;
-            case 4: pobrane.numerTelefonu=slowoDoZapisaniaWStrukturze;                          break;
-            case 5: pobrane.email=slowoDoZapisaniaWStrukturze;                                  break;
-            case 6: pobrane.adres=slowoDoZapisaniaWStrukturze;                                  break;
-            }
-                slowoDoZapisaniaWStrukturze="";
-                licznik++;
-        }
+int znajdzPozycjeOsobyWKsiazce(vector<KsiazkaAdresowa> &daneOsob, int szukanyNumerID){
+    int i;
+    for(i=0; i<daneOsob.size(); i++){
+        if(szukanyNumerID==daneOsob[i].id)
+            return i;
     }
-    ostatnieID = IDDoZapisaniaWStrukturze;
-    cout<<"ostatnieID: "<<ostatnieID<<endl;
-    system("pause");
-    if(porownajIDOsobyZIDUzytkownika(calaLiniaZTXT, uzytkownicy, pozycjaUzytkownika)==true)
-        daneOsob.push_back(pobrane);
-
-    return ostatnieID;
+    cout<<"Nie ma takiego adresata";
+    Sleep(1000);
+    return i=-1; //zabezpieczenie przed wprowadzeniem ID, ktorego nie ma w ksiazce
 }
 
-int dodajNowaOsobe (vector<KsiazkaAdresowa> &daneOsob, vector<KontaUzytkownikow> &uzytkownicy, int pozycjaUzytkownika, int ostatnieID){
+
+//////////////////////////////////////Opcje z menu glownego
+int dodajNowegoAdresata (vector<KsiazkaAdresowa> &daneOsob, vector<KontaUzytkownikow> &uzytkownicy, int pozycjaUzytkownika, int ostatnieID){
     KsiazkaAdresowa pobrane;
     vector <KsiazkaAdresowa>::iterator itr; //po co to?
     int pomocDoWprowadzaniaID, iloscOsob;  //ta liczbe tymczasowo wprowadzamy do struktury, razem z wyrazami (wiersz wyzej)
@@ -402,17 +405,14 @@ int dodajNowaOsobe (vector<KsiazkaAdresowa> &daneOsob, vector<KontaUzytkownikow>
     cout<<"Podaj adres: ";          getline(cin,pobrane.adres);
     cout<<endl;
 
-
-    pobrane.id=ostatnieID+1; //skrocony (jednolinijkowy) zapis dodawania ID dla nowej osoby
+    pobrane.id=ostatnieID+1;
 
     pobrane.idUzytkownikaKA=uzytkownicy[pozycjaUzytkownika].idUzytkownika;
-
     daneOsob.push_back(pobrane);
 
-    zapiszJednaOsobeDoTXT(daneOsob);
+    zapiszJednegoAdresataDoTXT(daneOsob);
 
-    cout<<"Nowy adresat zapisany!"<<endl;
-    Sleep(1200);
+    cout<<"Nowy adresat zapisany!"<<endl;   Sleep(1200);
     return pobrane.id;
 }
 
@@ -423,7 +423,7 @@ void szukajPoImieniu(vector<KsiazkaAdresowa> daneOsob){
 
     for(int i=0; i<daneOsob.size(); i++){
         if(szukaneImie==daneOsob[i].imie){
-            wypisywanieDanychPoLinijce(daneOsob, i);
+            wypisywanieAdresatowPoLinijce(daneOsob, i);
             iloscZnalezionychOsob++;
         }
     }
@@ -443,7 +443,7 @@ void szukajPoNazwisku(vector<KsiazkaAdresowa> daneOsob){
 
     for(int i=0; i<daneOsob.size(); i++){
         if(szukaneNazwisko==daneOsob[i].nazwisko){
-            wypisywanieDanychPoLinijce(daneOsob, i);
+            wypisywanieAdresatowPoLinijce(daneOsob, i);
             iloscZnalezionychOsob++;
         }
     }
@@ -456,68 +456,46 @@ void szukajPoNazwisku(vector<KsiazkaAdresowa> daneOsob){
     getch();
 }
 
-void wypiszWszystkieOsoby(vector<KsiazkaAdresowa> daneOsob){
+void wypiszWszystkichAdresatow(vector<KsiazkaAdresowa> daneOsob){
     cout<<endl;
     for(int i=0; i<daneOsob.size(); i++)
-             wypisywanieDanychPoLinijce(daneOsob, i);
+             wypisywanieAdresatowPoLinijce(daneOsob, i);
 
     cout<<"Nacisnij dowolny klawisz, aby kontynuowac";
     getch();
 }
 
-void wypisywanieDanychPoLinijce (vector<KsiazkaAdresowa> daneOsob, int i){
-    cout<<"ID Uzytkownika (z ksiazki): ";  cout<<daneOsob[i].idUzytkownikaKA<<endl;
-    cout<<"ID: ";              cout<<daneOsob[i].id<<endl;
-    cout<<"Imie: ";            cout<<daneOsob[i].imie<<endl;
-    cout<<"Nazwisko: ";        cout<<daneOsob[i].nazwisko<<endl;
-    cout<<"Numer telefonu: ";  cout<<daneOsob[i].numerTelefonu<<endl;
-    cout<<"Email: ";           cout<<daneOsob[i].email<<endl;
-    cout<<"Adres: ";           cout<<daneOsob[i].adres<<endl<<endl;
-
-}
-
-int usunOsobe (vector<KsiazkaAdresowa> &daneOsob, int ostatnieID){
+int usunAdresata (vector<KsiazkaAdresowa> &daneOsob, int ostatnieID){///wymaga "upiekszenia"
     vector <KsiazkaAdresowa>::iterator itr;
-    int numerIDDoUsuniecia, pozycjaWKsiazce;
+    int numerIDDoUsuniecia, pozycjaWKsiazce, idUsuwanegoAdresata;
     string potwierdzenieUsuniecia;
 
-    cout<<endl<<"Podaj numer ID osoby ktora chesz usunac: ";      cin>>numerIDDoUsuniecia;       cout<<endl;
+    cout<<endl<<"Podaj numer ID osoby ktora chesz usunac: ";      cin>>numerIDDoUsuniecia;
     pozycjaWKsiazce=znajdzPozycjeOsobyWKsiazce(daneOsob, numerIDDoUsuniecia);
-cout<<"ostatnieID: "<<ostatnieID<<endl; system("pause");
+
     if (pozycjaWKsiazce==-1) //zabezpieczenie przed wprowadzeniem ID ktorego nie ma w ksiazce
         return ostatnieID;
-cout<<"ostatnieID: "<<ostatnieID<<endl; system("pause");
-    wypisywanieDanychPoLinijce(daneOsob, pozycjaWKsiazce);
+
+    wypisywanieAdresatowPoLinijce(daneOsob, pozycjaWKsiazce);
     cout<<"Chcesz usunac tego adresata? t/n: ";             cin>>potwierdzenieUsuniecia;
 
-    if (potwierdzenieUsuniecia!="t")
+    if (potwierdzenieUsuniecia!="t"){
+        cout<<"Powrot do menu";
+        Sleep(1000);
         return ostatnieID;
-cout<<"ostatnieID: "<<ostatnieID<<endl; system("pause");
-cout<<"pozycjaWKsiazce: "<<pozycjaWKsiazce<<endl; system("pause");
-cout<<"daneOsob[pozycjaWKsiazce].id: "<<daneOsob[pozycjaWKsiazce].id<<endl; system("pause");
-    if (ostatnieID=daneOsob[pozycjaWKsiazce].id); ///pozycjaWKsiazce jest problemem, chyba
-        ostatnieID--;
+    }
+
+    idUsuwanegoAdresata=daneOsob[pozycjaWKsiazce].id;
 
     itr = daneOsob.begin()+pozycjaWKsiazce;
     daneOsob.erase(itr);
-cout<<"ostatnieID: "<<ostatnieID<<endl; system("pause");
-    zapiszWszystkieOsobyDoTXT(daneOsob);
+
+    ostatnieID=funkcjaZPlikamiDoEdycjiAdresatow(daneOsob, idUsuwanegoAdresata);
 
     cout<<"Adresat usuniety!";
     Sleep(1000);
-cout<<"ostatnieID: "<<ostatnieID<<endl; system("pause");
-    return ostatnieID;
-}
 
-int znajdzPozycjeOsobyWKsiazce(vector<KsiazkaAdresowa> &daneOsob, int szukanyNumerID){
-    int i;
-    for(i=0; i<daneOsob.size(); i++){
-        if(szukanyNumerID==daneOsob[i].id)
-            return i;
-    }
-    cout<<"Nie ma takiego adresata";
-    Sleep(1000);
-    return i=-1; //zabezpieczenie przed wprowadzeniem ID, ktorego nie ma w ksiazce
+    return ostatnieID;
 }
 
 void menuEdycja(vector<KsiazkaAdresowa> &daneOsob){
@@ -541,7 +519,7 @@ void menuEdycja(vector<KsiazkaAdresowa> &daneOsob){
             cout<<"5. Adres"                            <<endl;
             cout<<"0. Powrot do menu"                   <<endl<<endl;
 
-            wypisywanieDanychPoLinijce(daneOsob, pozycjaWKsiazce);
+            wypisywanieAdresatowPoLinijce(daneOsob, pozycjaWKsiazce);
             wybor=dokananyWyborEdycja(daneOsob, pozycjaWKsiazce);
 
             if (wybor=='0')
@@ -560,7 +538,7 @@ char dokananyWyborEdycja(vector<KsiazkaAdresowa> &daneOsob, int pozycjaWKsiazce)
         case '5':   zmienAdres(daneOsob, pozycjaWKsiazce);               break;
         case '0':   wybor='0';                                          break;
 
-        default: cout<<"Nie ma takiej opcji w menu.";
+        default: cout<<endl<<"Nie ma takiej opcji w menu.";
         Sleep(1000);
     }
     return wybor;
@@ -568,45 +546,114 @@ char dokananyWyborEdycja(vector<KsiazkaAdresowa> &daneOsob, int pozycjaWKsiazce)
 
 void zmienImie(vector<KsiazkaAdresowa> &daneOsob, int pozycjaWKsiazce){
     string informacjaDoZmiany;
-    cout<<"Podaj nowe imie: ";       cin>>informacjaDoZmiany;
+    cout<<"Podaj nowe imie: ";      cin.sync();       getline(cin, informacjaDoZmiany);
 
     daneOsob[pozycjaWKsiazce].imie=informacjaDoZmiany;
-    zapiszWszystkieOsobyDoTXT(daneOsob); //Zapisuje WSZYSTKIE informacje na temat tej konkretnej osoby, poniewaz mam taka funkcje,
-}                                       //w innym przypadku musialbym tworzyc osobne funkcje do zapisywania kazdej rzeczy osobno
+    funkcjaZPlikamiDoEdycjiAdresatow(daneOsob, pozycjaWKsiazce); //druga zmienna jest potrzebna do usuwania uzytkownika, ale cos trzeba wpisac zeby ruszylo
+}
 
 void zmienNazwisko(vector<KsiazkaAdresowa> &daneOsob, int pozycjaWKsiazce){
     string informacjaDoZmiany;
-    cout<<"Podaj nowe nazwisko: ";       cin>>informacjaDoZmiany;
+    cout<<"Podaj nowe nazwisko: ";       cin.sync();       getline(cin, informacjaDoZmiany);
 
     daneOsob[pozycjaWKsiazce].nazwisko=informacjaDoZmiany;
-    zapiszWszystkieOsobyDoTXT(daneOsob);
+    funkcjaZPlikamiDoEdycjiAdresatow(daneOsob, pozycjaWKsiazce);
 }
 
 void zmienNumerTelefonu(vector<KsiazkaAdresowa> &daneOsob, int pozycjaWKsiazce){
     string informacjaDoZmiany;
-    cout<<"Podaj nowy numer telefonu: ";       cin>>informacjaDoZmiany;
+    cout<<"Podaj nowy numer telefonu: ";       cin.sync();       getline(cin, informacjaDoZmiany);
 
     daneOsob[pozycjaWKsiazce].numerTelefonu=informacjaDoZmiany;
-    zapiszWszystkieOsobyDoTXT(daneOsob);
+    funkcjaZPlikamiDoEdycjiAdresatow(daneOsob, pozycjaWKsiazce);
 }
 
 void zmienEmail(vector<KsiazkaAdresowa> &daneOsob, int pozycjaWKsiazce){
     string informacjaDoZmiany;
-    cout<<"Podaj nowy email: ";       cin>>informacjaDoZmiany;
+    cout<<"Podaj nowy email: ";       cin.sync();       getline(cin, informacjaDoZmiany);
 
     daneOsob[pozycjaWKsiazce].email=informacjaDoZmiany;
-    zapiszWszystkieOsobyDoTXT(daneOsob);
+    funkcjaZPlikamiDoEdycjiAdresatow(daneOsob, pozycjaWKsiazce);
 }
 
 void zmienAdres(vector<KsiazkaAdresowa> &daneOsob, int pozycjaWKsiazce){
     string informacjaDoZmiany;
-    cout<<"Podaj nowy adres: ";       cin>>informacjaDoZmiany;
+    cout<<"Podaj nowy adres: ";       cin.sync();       getline(cin, informacjaDoZmiany);
 
     daneOsob[pozycjaWKsiazce].adres=informacjaDoZmiany;
-    zapiszWszystkieOsobyDoTXT(daneOsob);
+    funkcjaZPlikamiDoEdycjiAdresatow(daneOsob, pozycjaWKsiazce);
 }
 
 
+//////////////////////////////////////Przepisywanie danych miedzy dwoma plikami .txt przy edycji i usuwaniu adresatow
+int funkcjaZPlikamiDoEdycjiAdresatow(vector<KsiazkaAdresowa> daneOsob, int idUsunietegoAdresata){
+    fstream plik1;
+    plik1.open("Ksiazka adresowa.txt",ios::in);
+    fstream plik3;
+    plik3.open("Plik tymczasowy.txt",ios::out);
+    string liniaCase, calaLiniaZTXT, znak="|";
+    int IDAdresataPlik1, IDUzytkownikaStruktura, IDUzytkownikaPlik1=0, IDDomniemanegoOstatniegoAdresataPlik1=0;
+
+    while(getline(plik1,liniaCase)){
+        calaLiniaZTXT=znajdzIDAdresataIUzytkownika(daneOsob, IDAdresataPlik1, IDUzytkownikaPlik1, IDDomniemanegoOstatniegoAdresataPlik1, liniaCase);
+
+        for (int i=0; i<daneOsob.size(); i++){
+            IDUzytkownikaStruktura=daneOsob[i].idUzytkownikaKA;//linijka potrzebna do usunietego adresata
+
+            if(daneOsob[i].id == IDAdresataPlik1){
+                plik3<<daneOsob[i].id;                  plik3<<znak;
+                plik3<<daneOsob[i].idUzytkownikaKA;     plik3<<znak;
+                plik3<<daneOsob[i].imie;                plik3<<znak;
+                plik3<<daneOsob[i].nazwisko;            plik3<<znak;
+                plik3<<daneOsob[i].numerTelefonu;       plik3<<znak;
+                plik3<<daneOsob[i].email;               plik3<<znak;
+                plik3<<daneOsob[i].adres;               plik3<<znak<<endl;                  break;
+            }
+
+            else if(i==daneOsob.size()-1 && daneOsob[i].id != IDAdresataPlik1 && IDUzytkownikaPlik1!=IDUzytkownikaStruktura)
+                plik3<<calaLiniaZTXT<<endl;//zapisuje z oryginalnego pliku txt, jesli ID sie roznia (w strukturze sa tylko niektore kontakty)
+        }
+        if(daneOsob.size()==0 && IDAdresataPlik1!=idUsunietegoAdresata)
+            plik3<<calaLiniaZTXT<<endl;
+    }
+
+    if(IDAdresataPlik1==idUsunietegoAdresata)
+        IDAdresataPlik1=IDDomniemanegoOstatniegoAdresataPlik1;
+
+    plik1.close();
+    plik3.close();
+
+    remove("Ksiazka adresowa.txt");
+    rename("Plik tymczasowy.txt", "Ksiazka adresowa.txt");
+
+    return IDAdresataPlik1;//zwraca nam ID OSTATNIEGO adresata
+}
+
+string znajdzIDAdresataIUzytkownika(vector<KsiazkaAdresowa> daneOsob, int &IDAdresataPlik1, int &IDUzytkownikaPlik1, int &IDDomniemanegoOstatniegoAdresataPlik1, string liniaCase){
+    string calaLiniaZTXT, slowoDoZapisaniaWStrukturze;
+    int licznik=0;
+    switch(1){
+        case 1: calaLiniaZTXT= liniaCase;   break;
+    }
+    IDDomniemanegoOstatniegoAdresataPlik1=IDAdresataPlik1;//jesli OSTATNI adresat zostanie usuniety, w tej zmiennej bedzie ID ostatniego adresata (przedostatni stanie sie ostatnim)
+
+    for(int i=0; i<calaLiniaZTXT.length();i++){
+        if(calaLiniaZTXT[i]!='|')
+            slowoDoZapisaniaWStrukturze+=calaLiniaZTXT[i];
+        else{
+            switch(licznik){
+            case 0:   IDAdresataPlik1=konwersjaStringNaInt(slowoDoZapisaniaWStrukturze);        break;
+            case 1:   IDUzytkownikaPlik1=konwersjaStringNaInt(slowoDoZapisaniaWStrukturze);     break;
+            }
+                slowoDoZapisaniaWStrukturze="";
+                licznik++;
+        }
+    }
+    return calaLiniaZTXT;
+}
+
+
+//////////////////////////////////////Konwersje etc
 int konwersjaStringNaInt(string liczbaString){
     int liczbaInt;
     istringstream iss(liczbaString);
